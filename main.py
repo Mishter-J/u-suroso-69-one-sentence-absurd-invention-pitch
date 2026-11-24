@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """One-Sentence Absurd Invention Pitch — make.fun entry.
 
-Writes a single one-sentence absurd invention pitch (158 characters,
+Writes a single one-sentence absurd invention pitch (169 characters,
 one sentence) to /output/entry.txt.
 
-The pitch: a doorbell that interviews every visitor, rejects the ones
-with bad energy, and texts the owner a full report titled
+The pitch: a doorbell that gives every visitor a job interview,
+rejects the ones with bad energy, and texts the owner a full report titled
 "We dodged one today" before they even stand up. It names the tiny
 everyday annoyance (unwanted visitors at the door), the ridiculous
 invention (an interviewing doorbell), and its silly mechanism
@@ -26,12 +26,14 @@ MAX_PITCH_CHARS = 220
 MIN_PITCH_CHARS = 1
 
 PITCH = (
-    "A doorbell that interviews every visitor, rejects the ones with "
-    "bad energy, and texts you a full report titled \u2018We dodged one "
-    "today\u2019 before you even stand up."
+    "A doorbell that gives every visitor a job interview, rejects the "
+    "ones with bad energy, and texts you a full report titled "
+    "\u2018We dodged one today\u2019 before you even stand up."
 )
 
-OUTPUT_PATH = "/output/entry.txt"
+OUTPUT_PATH = os.path.join(
+    os.environ.get("OUTPUT_DIR", "/output"), "entry.txt"
+)
 
 
 def validate(pitch: str) -> None:
@@ -45,6 +47,10 @@ def validate(pitch: str) -> None:
         raise ValueError("pitch must be a single line")
     if not pitch.strip():
         raise ValueError("pitch must not be only whitespace")
+    # One sentence only: exactly one sentence terminator, at the end.
+    body = pitch.rstrip()
+    if sum(body.count(c) for c in ".!?") != 1 or not body.endswith("."):
+        raise ValueError("pitch must be exactly one sentence")
 
 
 def write_pitch(pitch: str) -> None:
